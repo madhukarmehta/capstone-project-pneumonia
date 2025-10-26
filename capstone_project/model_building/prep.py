@@ -10,6 +10,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder
 # for hugging face space authentication to upload files
 from huggingface_hub import login, HfApi
+from huggingface_hub import hf_hub_download
 
 # Define constants for the dataset and output paths
 repo_id = "madhukarmehta/capstone-project-pneumonia"
