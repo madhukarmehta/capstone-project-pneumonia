@@ -18,8 +18,8 @@ from huggingface_hub import login, HfApi, create_repo
 from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 from huggingface_hub import hf_hub_download
 import mlflow
-import keras
 import tensorflow as tf
+from tensorflow import keras
 from tensorflow.keras.preprocessing.image import ImageDataGenerator                              # Importing the ImageDataGenerator for data augmentation
 from tensorflow.keras.models import Sequential                                                   # Importing the sequential module to define a sequential model
 from tensorflow.keras.layers import Dense,Dropout,Flatten,Conv2D,MaxPooling2D,BatchNormalization # Defining all the layers to build our CNN Model
