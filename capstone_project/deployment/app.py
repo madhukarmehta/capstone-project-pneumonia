@@ -4,11 +4,11 @@ from huggingface_hub import hf_hub_download
 import joblib
 
 # Download and load the model
-model_path = hf_hub_download(repo_id="madhukarmehta/tourism-package-prediction", filename="best_tourism_pkg_prediction_model_v1.joblib")
+model_path = hf_hub_download(repo_id="madhukarmehta/capstone-project-pneumonia", filename="best_pneumonia_prediction_model_v1.joblib")
 model = joblib.load(model_path)
 
 # Streamlit UI for Machine Failure Prediction
-st.title("Tourism Package Prediction")
+st.title("capstone-project-pneumonia")
 st.write("""
 This application predicts predicts whether a customer will purchase the newly introduced Wellness Tourism Package before contacting them.
 """)
