@@ -161,12 +161,12 @@ with mlflow.start_run(run_name="cnn_v1"):
 
 
 
-  # Upload to Hugging Face
-  repo_id = "madhukarmehta/capstone-project-pneumonia"
-  repo_type = "model"
+    # Upload to Hugging Face
+    repo_id = "madhukarmehta/capstone-project-pneumonia"
+    repo_type = "model"
 
-  # Step 1: Check if the space exists
-  try:
+    # Step 1: Check if the space exists
+    try:
         api.repo_info(repo_id=repo_id, repo_type=repo_type)
         print(f"Space '{repo_id}' already exists. Using it.")
     except RepositoryNotFoundError:
