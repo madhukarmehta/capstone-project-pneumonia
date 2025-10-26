@@ -1,5 +1,6 @@
 # for data manipulation
 import pandas as pd
+import numpy as np
 import sklearn
 # for creating a folder
 import os
