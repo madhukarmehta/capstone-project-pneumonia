@@ -150,7 +150,7 @@ with mlflow.start_run(run_name="cnn_v1"):
     # -----------------------------------------------------
     # Log the trained Keras model to MLflow
     # -----------------------------------------------------
-    mlflow.keras.log_model(model, artifact_path="cnn_model")
+    mlflow.keras.log_model(model, name="cnn_model")
     
     print("✅ Model training complete and logged to MLflow")
 
