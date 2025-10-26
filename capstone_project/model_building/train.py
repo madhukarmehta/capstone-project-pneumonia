@@ -26,7 +26,8 @@ from tensorflow.keras.layers import Dense,Dropout,Flatten,Conv2D,MaxPooling2D,Ba
 from tensorflow.keras.optimizers import Adam,SGD                                                 # Importing the optimizers which can be used in our model
 from tensorflow.keras.models import Model
 import random
-
+from mlflow.models.signature import ModelSignature
+from mlflow.types import Schema, TensorSpec
 
 
 api = HfApi()
@@ -147,10 +148,22 @@ with mlflow.start_run(run_name="cnn_v1"):
         mlflow.log_metric("val_loss", history.history["val_loss"][epoch], step=epoch)
         mlflow.log_metric("val_acc", history.history["val_accuracy"][epoch], step=epoch)
     
+
+
+    input_schema = Schema([TensorSpec(np.dtype(np.float32), (-1, 224, 224, 1))])
+    output_schema = Schema([TensorSpec(np.dtype(np.float32), (-1, 1))])
+    signature = ModelSignature(inputs=input_schema, outputs=output_schema)
+
     # -----------------------------------------------------
     # Log the trained Keras model to MLflow
     # -----------------------------------------------------
-    mlflow.keras.log_model(model, name="cnn_model")
+    
+    mlflow.keras.log_model(
+    model,
+    name="cnn_model",
+    signature=signature,
+    input_example=Xtrain[:1]
+    )
     
     print("✅ Model training complete and logged to MLflow")
 
