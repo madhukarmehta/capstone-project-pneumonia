@@ -19,7 +19,13 @@ DATASET_PATH_NPY = "hf://datasets/madhukarmehta/capstone-project-pneumonia/pneu_
 DATASET_PATH_LABEL = "hf://datasets/madhukarmehta/capstone-project-pneumonia/train_label.csv"
 lable_df = pd.read_csv(DATASET_PATH_LABEL)
 
-local_npy_path = hf_hub_download(repo_id=repo_id, filename="pneu_image_cut.npy")
+local_npy_path = hf_hub_download(
+    repo_id=repo_id,
+    filename="pneu_image_cut.npy",
+    repo_type="dataset",          # <-- crucial line
+    token=os.getenv("HF_TOKEN")   # optional if private
+)
+
 gray_images = np.load(local_npy_path)
 
 print("Dataset loaded successfully.")
