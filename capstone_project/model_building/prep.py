@@ -30,7 +30,7 @@ gray_images = np.load(local_npy_path)
 
 print("Dataset loaded successfully.")
 
-X_train, X_val, y_train, y_val = train_test_split(gray_images,lable_df['Target'],test_size=0.2, random_state=42,stratify=lable_df['Target'])
+X_train, X_test, y_train, y_test = train_test_split(gray_images,lable_df['Target'],test_size=0.2, random_state=42,stratify=lable_df['Target'])
 
 
 np.save("X_train.npy", X_train)

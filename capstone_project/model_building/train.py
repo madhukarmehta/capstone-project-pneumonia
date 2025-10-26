@@ -41,7 +41,7 @@ ytest = np.load(ytest_path)
 from sklearn.preprocessing import LabelBinarizer
 enc = LabelBinarizer()
 y_train_encoded = enc.fit_transform(ytrain)
-y_val_encoded=enc.transform(ytest)
+y_test_encoded=enc.transform(ytest)
 
 # Intializing a sequential model
 model = Sequential()
@@ -65,7 +65,7 @@ model.add(Flatten())
 model.add(Dense(100, activation='relu'))
 
 # Adding the output layer with 1 neurons and activation functions as sigmoid since this is a binary classification problem  
-model.add(Dense(num_classes, activation='softmax'))
+model.add(Dense(1, activation='sigmoid'))
 
 # Using Adam Optimizer
 opt = Adam()
