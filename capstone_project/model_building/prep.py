@@ -12,11 +12,14 @@ from sklearn.preprocessing import LabelEncoder
 from huggingface_hub import login, HfApi
 
 # Define constants for the dataset and output paths
+repo_id = "madhukarmehta/capstone-project-pneumonia"
 api = HfApi(token=os.getenv("HF_TOKEN"))
 DATASET_PATH_NPY = "hf://datasets/madhukarmehta/capstone-project-pneumonia/pneu_image_cut.npy"
 DATASET_PATH_LABEL = "hf://datasets/madhukarmehta/capstone-project-pneumonia/train_label.csv"
 lable_df = pd.read_csv(DATASET_PATH_LABEL)
-gray_images = np.load(DATASET_PATH_NPY)
+
+local_npy_path = hf_hub_download(repo_id=repo_id, filename="pneu_image_cut.npy")
+gray_images = np.load(local_npy_path)
 
 print("Dataset loaded successfully.")
 
