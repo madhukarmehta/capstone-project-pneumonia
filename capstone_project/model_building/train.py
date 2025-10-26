@@ -23,11 +23,6 @@ mlflow.set_experiment("capstone-experiment")
 
 api = HfApi()
 
-np.save("X_train.npy", X_train)
-np.save("X_test.npy", X_test)
-np.save("y_train.npy", y_train)
-np.save("y_test.npy", y_test)
-
 Xtrain_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/X_train.npy"
 Xtest_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/X_test.npy"
 ytrain_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/y_train.npy"
