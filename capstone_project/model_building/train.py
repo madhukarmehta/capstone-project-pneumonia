@@ -27,8 +27,7 @@ from tensorflow.keras.optimizers import Adam,SGD                                
 from tensorflow.keras.models import Model
 import random
 
-mlflow.set_tracking_uri("http://localhost:6000")
-mlflow.set_experiment("capstone-experiment")
+
 
 api = HfApi()
 repo_id = "madhukarmehta/capstone-project-pneumonia"
@@ -75,66 +74,99 @@ np.random.seed(42)
 random.seed(42)
 tf.random.set_seed(42)
 
-# Intializing a sequential model
-model = Sequential()
+def create_cnn_model():
+  
+  # Intializing a sequential model
+  model = Sequential()
 
-# Adding first conv layer with 64 filters and kernel size 3x3 , padding 'same' provides the output size same as the input size
-# Input_shape denotes input image dimension of images
-model.add(Conv2D(64, (3, 3), activation='relu', padding="same", input_shape=(224, 224, 1)))
+  # Adding first conv layer with 64 filters and kernel size 3x3 , padding 'same' provides the output size same as the input size
+  # Input_shape denotes input image dimension of images
+  model.add(Conv2D(64, (3, 3), activation='relu', padding="same", input_shape=(224, 224, 1)))
 
-# Adding max pooling to reduce the size of output of first conv layer
-model.add(MaxPooling2D((2, 2), padding = 'same'))
+  # Adding max pooling to reduce the size of output of first conv layer
+  model.add(MaxPooling2D((2, 2), padding = 'same'))
 
-model.add(Conv2D(32, (3, 3), activation='relu', padding="same"))
-model.add(MaxPooling2D((2, 2), padding = 'same'))
-model.add(Conv2D(32, (3, 3), activation='relu', padding="same"))
-model.add(MaxPooling2D((2, 2), padding = 'same'))
+  model.add(Conv2D(32, (3, 3), activation='relu', padding="same"))
+  model.add(MaxPooling2D((2, 2), padding = 'same'))
+  model.add(Conv2D(32, (3, 3), activation='relu', padding="same"))
+  model.add(MaxPooling2D((2, 2), padding = 'same'))
 
-# flattening the output of the conv layer after max pooling to make it ready for creating dense connections
-model.add(Flatten())
+  # flattening the output of the conv layer after max pooling to make it ready for creating dense connections
+  model.add(Flatten())
 
-# Adding a fully connected dense layer with 100 neurons    
-model.add(Dense(100, activation='relu'))
+  # Adding a fully connected dense layer with 100 neurons    
+  model.add(Dense(100, activation='relu'))
 
-# Adding the output layer with 1 neurons and activation functions as sigmoid since this is a binary classification problem  
-model.add(Dense(1, activation='sigmoid'))
+  # Adding the output layer with 1 neurons and activation functions as sigmoid since this is a binary classification problem  
+  model.add(Dense(1, activation='sigmoid'))
 
-# Using Adam Optimizer
-opt = Adam()
+  # Using Adam Optimizer
+  opt = Adam()
 
-# Compile model
-model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
+  # Compile model
+  model.compile(optimizer=opt, loss='binary_crossentropy', metrics=['accuracy'])
 
-# Generating the summary of the model
-model.summary()
+  # Generating the summary of the model
+  model.summary()
 
+  return model
 
+# -----------------------------------------------------
+# Set MLflow tracking (local or remote)
+# -----------------------------------------------------
+mlflow.set_tracking_uri("http://localhost:6000")
+mlflow.set_experiment("capstone-experiment")
+
+# -----------------------------------------------------
 # Start MLflow run
-with mlflow.start_run():
-    # Hyperparameter tuning
-    history_1 = model.fit(
-            Xtrain, y_train_encoded,
-            epochs=15,
-            validation_split=0.1,
-            shuffle=True,
-            batch_size=64,
-            verbose=2   
+# -----------------------------------------------------
+with mlflow.start_run(run_name="cnn_v1"):
+    
+    # Log model hyperparameters
+    mlflow.log_param("optimizer", "Adam")
+    mlflow.log_param("epochs", 15)
+    mlflow.log_param("batch_size", 64)
+    mlflow.log_param("input_shape", "(224,224,1)")
+    
+    # Create and train model
+    model = create_cnn_model()
+    history = model.fit(
+        Xtrain, y_train_encoded,
+        epochs=15,
+        validation_split=0.1,
+        shuffle=True,
+        batch_size=64,
+        verbose=2
     )
+    # -----------------------------------------------------
+    # Log training and validation metrics
+    # -----------------------------------------------------
+    for epoch in range(len(history.history["loss"])):
+        mlflow.log_metric("train_loss", history.history["loss"][epoch], step=epoch)
+        mlflow.log_metric("train_acc", history.history["accuracy"][epoch], step=epoch)
+        mlflow.log_metric("val_loss", history.history["val_loss"][epoch], step=epoch)
+        mlflow.log_metric("val_acc", history.history["val_accuracy"][epoch], step=epoch)
+    
+    # -----------------------------------------------------
+    # Log the trained Keras model to MLflow
+    # -----------------------------------------------------
+    mlflow.keras.log_model(model, artifact_path="cnn_model")
+    
+    print("✅ Model training complete and logged to MLflow")
+
 
     # Save the model locally
     model_path = "best_pneumonia_prediction_model_v1.joblib"
     joblib.dump(model, model_path)
 
-    # Log the model artifact
-    mlflow.log_artifact(model_path, artifact_path="model")
-    print(f"Model saved as artifact at: {model_path}")
 
-    # Upload to Hugging Face
-    repo_id = "madhukarmehta/capstone-project-pneumonia"
-    repo_type = "model"
 
-    # Step 1: Check if the space exists
-    try:
+  # Upload to Hugging Face
+  repo_id = "madhukarmehta/capstone-project-pneumonia"
+  repo_type = "model"
+
+  # Step 1: Check if the space exists
+  try:
         api.repo_info(repo_id=repo_id, repo_type=repo_type)
         print(f"Space '{repo_id}' already exists. Using it.")
     except RepositoryNotFoundError:
