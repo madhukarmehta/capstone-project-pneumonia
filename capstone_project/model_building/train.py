@@ -18,20 +18,30 @@ from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 import mlflow
 
 mlflow.set_tracking_uri("http://localhost:6000")
-mlflow.set_experiment("toruism-pacakge-experiment")
+mlflow.set_experiment("capstone-experiment")
 
 api = HfApi()
 
+np.save("X_train.npy", X_train)
+np.save("X_test.npy", X_test)
+np.save("y_train.npy", y_train)
+np.save("y_test.npy", y_test)
 
-Xtrain_path = "hf://datasets/madhukarmehta/tourism-package-prediction/Xtrain.csv"
-Xtest_path = "hf://datasets/madhukarmehta/tourism-package-prediction/Xtest.csv"
-ytrain_path = "hf://datasets/madhukarmehta/tourism-package-prediction/ytrain.csv"
-ytest_path = "hf://datasets/madhukarmehta/tourism-package-prediction/ytest.csv"
+Xtrain_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/X_train.npy"
+Xtest_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/X_test.npy"
+ytrain_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/y_train.npy"
+ytest_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/y_test.npy"
 
-Xtrain = pd.read_csv(Xtrain_path)
-Xtest = pd.read_csv(Xtest_path)
-ytrain = pd.read_csv(ytrain_path)
-ytest = pd.read_csv(ytest_path)
+Xtrain = np.load(Xtrain_path)
+Xtest = np.load(Xtest_path)
+ytrain = np.load(ytrain_path)
+ytest = np.load(ytest_path)
+
+
+from sklearn.preprocessing import LabelBinarizer
+enc = LabelBinarizer()
+y_train_encoded = enc.fit_transform(ytrain)
+y_val_encoded=enc.transform(ytest)
 
 # Intializing a sequential model
 model = Sequential()

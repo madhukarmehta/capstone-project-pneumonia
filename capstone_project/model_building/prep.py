@@ -14,25 +14,19 @@ from huggingface_hub import login, HfApi
 api = HfApi(token=os.getenv("HF_TOKEN"))
 DATASET_PATH_NPY = "hf://datasets/madhukarmehta/capstone-project-pneumonia/pneu_image_cut.npy"
 DATASET_PATH_LABEL = "hf://datasets/madhukarmehta/capstone-project-pneumonia/train_label.csv"
-gray_images = pd.read_csv(DATASET_PATH_NPY)
+gray_images = np.load(DATASET_PATH_NPY)
 lable_df = pd.read_csv(DATASET_PATH_LABEL)
 print("Dataset loaded successfully.")
 
 X_train, X_val, y_train, y_val = train_test_split(gray_images,lable_df['Target'],test_size=0.2, random_state=42,stratify=lable_df['Target'])
 
 
+np.save("X_train.npy", X_train)
+np.save("X_test.npy", X_test)
+np.save("y_train.npy", y_train)
+np.save("y_test.npy", y_test)
 
-# Perform train-test split
-Xtrain, Xtest, ytrain, ytest = train_test_split(
-    X, y, test_size=0.2, random_state=42
-)
-X_train.to_csv("Xtrain.csv",index=False)
-X_val.to_csv("Xtest.csv",index=False)
-y_train.to_csv("ytrain.csv",index=False)
-y_val.to_csv("ytest.csv",index=False)
-
-
-files = ["Xtrain.csv","Xtest.csv","ytrain.csv","ytest.csv"]
+files = ["X_train.npy","X_test.npy","y_train.npy","y_test.npy"]
 
 for file_path in files:
     api.upload_file(
