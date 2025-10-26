@@ -18,6 +18,14 @@ from huggingface_hub import login, HfApi, create_repo
 from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 from huggingface_hub import hf_hub_download
 import mlflow
+import keras
+import tensorflow as tf
+from tensorflow.keras.preprocessing.image import ImageDataGenerator                              # Importing the ImageDataGenerator for data augmentation
+from tensorflow.keras.models import Sequential                                                   # Importing the sequential module to define a sequential model
+from tensorflow.keras.layers import Dense,Dropout,Flatten,Conv2D,MaxPooling2D,BatchNormalization # Defining all the layers to build our CNN Model
+from tensorflow.keras.optimizers import Adam,SGD                                                 # Importing the optimizers which can be used in our model
+from tensorflow.keras.models import Model
+import random
 
 mlflow.set_tracking_uri("http://localhost:6000")
 mlflow.set_experiment("capstone-experiment")
@@ -62,6 +70,10 @@ from sklearn.preprocessing import LabelBinarizer
 enc = LabelBinarizer()
 y_train_encoded = enc.fit_transform(ytrain)
 y_test_encoded=enc.transform(ytest)
+
+np.random.seed(42)
+random.seed(42)
+tf.random.set_seed(42)
 
 # Intializing a sequential model
 model = Sequential()
