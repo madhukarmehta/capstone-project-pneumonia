@@ -23,10 +23,33 @@ mlflow.set_experiment("capstone-experiment")
 
 api = HfApi()
 
-Xtrain_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/X_train.npy"
-Xtest_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/X_test.npy"
-ytrain_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/y_train.npy"
-ytest_path = "hf://datasets/madhukarmehta/capstone-project-pneumonia/y_test.npy"
+Xtrain_path = hf_hub_download(
+    repo_id=repo_id,
+    filename="X_train.npy",
+    repo_type="dataset",          # <-- crucial line
+    token=os.getenv("HF_TOKEN")   # optional if private
+)
+
+Xtest_path = hf_hub_download(
+    repo_id=repo_id,
+    filename="X_test.npy",
+    repo_type="dataset",          # <-- crucial line
+    token=os.getenv("HF_TOKEN")   # optional if private
+)
+
+ytrain_path = hf_hub_download(
+    repo_id=repo_id,
+    filename="y_train.npy",
+    repo_type="dataset",          # <-- crucial line
+    token=os.getenv("HF_TOKEN")   # optional if private
+)
+
+ytest_path = hf_hub_download(
+    repo_id=repo_id,
+    filename="y_test.npy",
+    repo_type="dataset",          # <-- crucial line
+    token=os.getenv("HF_TOKEN")   # optional if private
+)
 
 Xtrain = np.load(Xtrain_path)
 Xtest = np.load(Xtest_path)
