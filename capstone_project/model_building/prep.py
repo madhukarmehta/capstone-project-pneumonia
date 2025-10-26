@@ -15,8 +15,9 @@ from huggingface_hub import login, HfApi
 api = HfApi(token=os.getenv("HF_TOKEN"))
 DATASET_PATH_NPY = "hf://datasets/madhukarmehta/capstone-project-pneumonia/pneu_image_cut.npy"
 DATASET_PATH_LABEL = "hf://datasets/madhukarmehta/capstone-project-pneumonia/train_label.csv"
-gray_images = np.load(DATASET_PATH_NPY)
 lable_df = pd.read_csv(DATASET_PATH_LABEL)
+gray_images = np.load(DATASET_PATH_NPY)
+
 print("Dataset loaded successfully.")
 
 X_train, X_val, y_train, y_val = train_test_split(gray_images,lable_df['Target'],test_size=0.2, random_state=42,stratify=lable_df['Target'])
