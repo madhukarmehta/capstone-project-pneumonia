@@ -22,7 +22,7 @@ mlflow.set_tracking_uri("http://localhost:6000")
 mlflow.set_experiment("capstone-experiment")
 
 api = HfApi()
-
+repo_id = "madhukarmehta/capstone-project-pneumonia"
 Xtrain_path = hf_hub_download(
     repo_id=repo_id,
     filename="X_train.npy",
