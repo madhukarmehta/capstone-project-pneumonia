@@ -76,7 +76,7 @@ random.seed(42)
 tf.random.set_seed(42)
 
 def create_cnn_model():
-  
+
   # Intializing a sequential model
   model = Sequential()
 
@@ -95,10 +95,10 @@ def create_cnn_model():
   # flattening the output of the conv layer after max pooling to make it ready for creating dense connections
   model.add(Flatten())
 
-  # Adding a fully connected dense layer with 100 neurons    
+  # Adding a fully connected dense layer with 100 neurons
   model.add(Dense(100, activation='relu'))
 
-  # Adding the output layer with 1 neurons and activation functions as sigmoid since this is a binary classification problem  
+  # Adding the output layer with 1 neurons and activation functions as sigmoid since this is a binary classification problem
   model.add(Dense(1, activation='sigmoid'))
 
   # Using Adam Optimizer
@@ -122,13 +122,13 @@ mlflow.set_experiment("capstone-experiment")
 # Start MLflow run
 # -----------------------------------------------------
 with mlflow.start_run(run_name="cnn_v1"):
-    
+
     # Log model hyperparameters
     mlflow.log_param("optimizer", "Adam")
     mlflow.log_param("epochs", 15)
     mlflow.log_param("batch_size", 64)
     mlflow.log_param("input_shape", "(224,224,1)")
-    
+
     # Create and train model
     model = create_cnn_model()
     history = model.fit(
@@ -147,24 +147,24 @@ with mlflow.start_run(run_name="cnn_v1"):
         mlflow.log_metric("train_acc", history.history["accuracy"][epoch], step=epoch)
         mlflow.log_metric("val_loss", history.history["val_loss"][epoch], step=epoch)
         mlflow.log_metric("val_acc", history.history["val_accuracy"][epoch], step=epoch)
-    
 
-
-    input_schema = Schema([TensorSpec(np.dtype(np.float32), (-1, 224, 224, 1))])
-    output_schema = Schema([TensorSpec(np.dtype(np.float32), (-1, 1))])
-    signature = ModelSignature(inputs=input_schema, outputs=output_schema)
 
     # -----------------------------------------------------
     # Log the trained Keras model to MLflow
     # -----------------------------------------------------
-    
-    mlflow.keras.log_model(
-    model,
-    name="cnn_model",
-    signature=signature,
-    input_example=Xtrain[:1]
-    )
-    
+    try:
+       input_example = Xtrain[:1].tolist()
+       signature = mlflow.models.infer_signature(Xtrain, model.predict(Xtrain[:10]))
+       mlflow.keras.log_model(
+          model,
+          name="cnn_model",
+          input_example=input_example,
+          signature=signature
+       )
+    except FileNotFoundError:
+       print("⚠️ Skipping input_example due to CI/CD file system limitations.")
+       mlflow.keras.log_model(model, name="cnn_model", signature=signature)
+
     print("✅ Model training complete and logged to MLflow")
 
 
