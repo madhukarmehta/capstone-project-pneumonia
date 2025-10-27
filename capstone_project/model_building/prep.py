@@ -46,6 +46,19 @@ def dicom_to_png(dicom_path, png_path, size=(224,224)):
     cv2.imwrite(png_path, img)
 
 # Iterates through all .dcm files in the input directory, converts each to PNG, and saves it in the output directory with the same base name.
+
+# Download dataset locally (returns a local path)
+local_dir = snapshot_download(
+    repo_id="madhukarmehta/capstone-project-pneumonia",
+    repo_type="dataset"
+)
+
+# Construct the real local path
+DICOM_DIR = os.path.join(local_dir, "train_dicom")
+
+if not os.path.exists(DICOM_DIR):
+    raise FileNotFoundError(f"DICOM directory not found at {DICOM_DIR}")
+
 for fname in tqdm(os.listdir(DICOM_DIR)):
     if fname.endswith(".dcm"):
         dicom_path = os.path.join(DICOM_DIR, fname)
