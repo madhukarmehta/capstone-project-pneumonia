@@ -5,3 +5,5 @@ scikit-learn==1.6.0
 xgboost==2.1.4
 mlflow==3.0.1
 tensorflow==2.19.0
+pydicom==2.4.4 
+opencv-python==4.10.*
